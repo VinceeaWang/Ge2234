@@ -1,0 +1,8 @@
+const chapters=[...document.querySelectorAll('.chapter[data-title]')],select=document.querySelector('#chapterSelect');
+document.querySelector('#menu').onclick=()=>document.querySelector('#sidebar').classList.toggle('open');
+if(chapters.length){let visited=[];try{visited=JSON.parse(localStorage.getItem('ge2234-week1-visited')||'[]');if(!Array.isArray(visited))visited=[];}catch{}
+select.innerHTML=chapters.map(c=>'<option value="'+c.id+'">'+c.dataset.title+'</option>').join('');
+function show(id){if(!chapters.some(c=>c.id===id))id='overview';chapters.forEach(c=>c.classList.toggle('active',c.id===id));select.value=id;history.replaceState(null,'','#'+id);if(!visited.includes(id))visited.push(id);try{localStorage.setItem('ge2234-week1-visited',JSON.stringify(visited));}catch{}const p=Math.round(100*chapters.filter(c=>visited.includes(c.id)).length/chapters.length);document.querySelector('#progressText').textContent=p+'%';document.querySelector('#progressBar').style.width=p+'%';document.querySelector('#sidebar').classList.remove('open');window.scrollTo(0,0);}
+select.onchange=()=>show(select.value);document.querySelectorAll('[data-section]').forEach(b=>b.onclick=()=>show(b.dataset.section));window.addEventListener('hashchange',()=>show(location.hash.slice(1)));show(location.hash.slice(1));
+document.querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>{const correct=b.dataset.answer==='correct',f=document.querySelector('#introFeedback');f.className='feedback '+(correct?'good':'bad');f.textContent=correct?'Correct. A asked B for advice. B does not necessarily ask A in return.':'Try again. The arrow starts with the person asking for advice.';});
+}
